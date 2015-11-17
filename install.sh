@@ -3,10 +3,8 @@ git clone https://github.com/nekoya/dotfiles_compact.git ~/dotfiles
 SELF_DIR=~/dotfiles
 
 copy() {
-if [ ! -e ~/$1 ]; then
-    echo "copy: $1"
-    cp -a ${SELF_DIR}/$1 ~
-fi
+echo "copy: $1"
+cp -a ${SELF_DIR}/$1 ~
 }
 
 make_dir() {
