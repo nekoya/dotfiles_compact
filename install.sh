@@ -25,7 +25,6 @@ fi
 
 # zsh
 copy .zshrc
-copy .zshrc.mine
 
 # vim
 copy .vimrc
