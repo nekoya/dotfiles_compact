@@ -33,7 +33,7 @@ curl https://raw.githubusercontent.com/Shougo/neobundle.vim/master/bin/install.s
 
 # git
 mkdir ~/bin
-sudo install -m 0755 /usr/share/doc/git/contrib/diff-highlight/diff-highlight ~/bin/
+install -m 0755 /usr/share/doc/git/contrib/diff-highlight/diff-highlight ~/bin/
 set_symlink .gitconfig
 
 # ssh
