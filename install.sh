@@ -1,5 +1,5 @@
 #!/bin/sh
-git clone git@github.com:nekoya/dotfiles_compact ~/dotfiles
+git clone https://github.com/nekoya/dotfiles_compact.git ~/dotfiles
 SELF_DIR=~/dotfiles
 
 copy() {
