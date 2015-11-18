@@ -28,7 +28,9 @@ install -m 0755 /usr/share/doc/git/contrib/diff-highlight/diff-highlight ~/bin/
 copy .gitconfig
 
 # ssh
-copy .ssh
+install -d -m 0755 ~/.ssh
+echo "StrictHostKeyChecking no\n" > ~/.ssh/config
+chmod 600 ~/.ssh/config
 
 # tmux
 copy .tmux.conf
