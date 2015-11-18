@@ -32,15 +32,6 @@ case ${UID} in
         PROMPT="%{${fg[cyan]}%}$(echo ${HOST%%.*} | tr '[a-z]' '[A-Z]') ${PROMPT}"
     ;;
 esac
-PROMPT="
-%{$terminfo[bold]$fg[blue]%}#%{$reset_color%} \
-%{$fg[cyan]%}%n \
-%{$fg[white]%}at \
-%{$fg[green]%}${HOST} \
-%{$fg[white]%}in \
-%{$terminfo[bold]$fg[yellow]%}%~%{$reset_color%} \
-%{$fg[white]%}[%*]
-%{$terminfo[bold]$fg[red]%}$ %{$reset_color%}"
 
 # auto change directory
 #
@@ -204,6 +195,25 @@ xterm|xterm-color|kterm|kterm-color)
     ;;
 esac
 
+# set prompt with vcs_info
+#
+autoload -Uz vcs_info
+setopt prompt_subst
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' stagedstr " %F{yellow}!"
+zstyle ':vcs_info:git:*' unstagedstr " %F{red}+"
+zstyle ':vcs_info:*' formats "on git:%F{cyan}%b%c%u%f"
+zstyle ':vcs_info:*' actionformats '[%b|%a]'
+precmd () { vcs_info }
+PROMPT='
+%{$terminfo[bold]$fg[blue]%}#%{$reset_color%} \
+%{$fg[cyan]%}%n \
+%{$fg[white]%}at \
+%{$fg[green]%}${HOST} \
+%{$fg[white]%}in \
+%{$terminfo[bold]$fg[yellow]%}%~%{$reset_color%} \
+%{$fg[white]%}${vcs_info_msg_0_} [%*]
+%{$terminfo[bold]$fg[red]%}$ %{$reset_color%}'
 
 ## load user .zshrc configuration file
 #
