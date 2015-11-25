@@ -19,6 +19,7 @@ copy .zshrc
 
 # vim
 copy .vimrc
+copy .vim
 curl https://raw.githubusercontent.com/Shougo/neobundle.vim/master/bin/install.sh | sh
 ~/.vim/bundle/neobundle.vim/bin/neoinstall
 
