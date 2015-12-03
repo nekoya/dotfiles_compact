@@ -217,5 +217,5 @@ PROMPT='
 
 ## load user .zshrc configuration file
 #
-export PATH="~/bin:$PATH"
+export PATH="${HOME}/bin:$PATH"
 [ -f ${HOME}/.zshrc.mine ] && source ${HOME}/.zshrc.mine
