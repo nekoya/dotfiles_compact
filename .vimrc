@@ -105,9 +105,17 @@ call neobundle#begin(expand('~/.vim/bundle/'))
 NeoBundle 'Shougo/neobundle.vim'
 NeoBundle "nvie/vim-flake8"
 NeoBundle 'vim-scripts/YankRing.vim'
+"NeoBundle 'thinca/vim-quickrun'
+"NeoBundle 'Shougo/vimproc'
+"NeoBundle 'Shougo/unite.vim'
+"NeoBundle 'Shougo/neomru.vim'
+"NeoBundle 'Shougo/vimfiler'
+"NeoBundle 'majutsushi/tagbar'
 NeoBundle "Align"
-NeoBundle 'ekalinin/Dockerfile.vim'
-NeoBundle 'glidenote/keepalived-syntax.vim'
+"NeoBundle 'kana/vim-smartchr'
+"NeoBundle 'ekalinin/Dockerfile.vim'
+"NeoBundle 'glidenote/keepalived-syntax.vim'
+"NeoBundle 'Blackrush/vim-gocode'
 
 let g:make = 'gmake'
 if system('uname -o') =~ '^GNU/'
@@ -210,28 +218,129 @@ augroup END
 "  plugin settings
 " ----------------------------------------
 
+" if has('lua') && v:version > 703 && has('patch825') 2013-07-03 14:30 > から >= に修正
+" if has('lua') && v:version >= 703 && has('patch825') 2013-07-08 10:00 必要バージョンが885にアップデートされていました
+if has('lua') && v:version >= 703 && has('patch885')
+    NeoBundleLazy "Shougo/neocomplete.vim", {
+        \ "autoload": {
+        \   "insert": 1,
+        \ }}
+    " 2013-07-03 14:30 NeoComplCacheに合わせた
+    let g:neocomplete#enable_at_startup = 1
+    let s:hooks = neobundle#get_hooks("neocomplete.vim")
+    function! s:hooks.on_source(bundle)
+        let g:acp_enableAtStartup = 0
+        let g:neocomplet#enable_smart_case = 1
+        " NeoCompleteを有効化
+        " NeoCompleteEnable
+    endfunction
+else
+    NeoBundleLazy "Shougo/neocomplcache.vim", {
+        \ "autoload": {
+        \   "insert": 1,
+        \ }}
+    " 2013-07-03 14:30 原因不明だがNeoComplCacheEnableコマンドが見つからないので変更
+    let g:neocomplcache_enable_at_startup = 1
+    let s:hooks = neobundle#get_hooks("neocomplcache.vim")
+    function! s:hooks.on_source(bundle)
+        let g:acp_enableAtStartup = 0
+        let g:neocomplcache_enable_smart_case = 1
+        " NeoComplCacheを有効化
+        " NeoComplCacheEnable_
+    endfunction
+endif
+
+" - neocomplcache ------------------------
+
+" Use neocomplcache.
+let g:NeoComplCache_EnableAtStartup = 1
+" Use smartcase.
+let g:NeoComplCache_SmartCase = 1
+" Use previous keyword completion.
+let g:NeoComplCache_PreviousKeywordCompletion = 1
+" Use tags auto update.
+let g:NeoComplCache_TagsAutoUpdate = 1
+" Use preview window.
+let g:NeoComplCache_EnableInfo = 1
+" Use camel case completion.
+let g:NeoComplCache_EnableCamelCaseCompletion = 1
+" Use underbar completion.
+let g:NeoComplCache_EnableUnderbarCompletion = 1
+" Set minimum syntax keyword length.
+let g:NeoComplCache_MinSyntaxLength = 2
+" Set skip input time.
+let g:NeoComplCache_SkipInputTime = '0.2'
+" Set manual completion length.
+let g:NeoComplCache_ManualCompletionStartLength = 0
+
 " - Align --------------------------------
 vnoremap a :Align
 vnoremap A :Align => <CR>
+
+" - tagbar -------------------------------
+let g:tagbar_left = 1
+nnoremap <Space>t :TagbarToggle<CR>
+nnoremap <C-w>h <C-w>h :let g:tagbar_left=1<CR>
+nnoremap <C-w>l <C-w>l :let g:tagbar_left=0<CR>
+
+let g:tagbar_type_go = {
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : {
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+\ }
+
+" - vimfiler -----------------------------
+nnoremap <Space>f  :VimFiler<CR>
+nnoremap <Space>F  :VimFilerExplorer<CR>
+let g:vimfiler_as_default_explorer = 1
+let g:vimfiler_ignore_pattern = '\.pyc$'
+let g:vimfiler_safe_mode_by_default = 0
+
+" - unite.vim ----------------------------
+"let g:unite_enable_start_insert = 1
+let g:unite_enable_ignore_case = 1
+let g:unite_enable_smart_case = 1
+
+nnoremap <silent> <Space>ub :<C-u>Unite buffer<CR>
+nnoremap <silent> <Space>uf :<C-u>Unite file<CR>
+nnoremap <silent> <Space>uu :<C-u>Unite file_mru buffer<CR>
+
+nnoremap <silent> <Space>ug  :<C-u>Unite grep:. -buffer-name=search-buffer<CR>
+nnoremap <silent> <Space>ur  :<C-u>UniteResume search-buffer<CR>
+
+if executable('ag')
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+  let g:unite_source_grep_recursive_opt = ''
+endif
 
 " ----------------------------------------
 "  Python
 " ----------------------------------------
 
 " - flake8 -------------------------------
-let g:flake8_ignore = ''
-function! Flake8IgnoreToggle()
-    let rule = 'E501'
-    if g:flake8_ignore == rule
-        echo 'flake8 check E501'
-        let g:flake8_ignore = ''
-    else
-        echo 'flake8 ignore E501'
-        let g:flake8_ignore = rule
-    endif
-endfunction
-nnoremap <Space>5 :<C-u>call Flake8IgnoreToggle()<CR>
-
 augroup Hooks
     autocmd BufWrite *.py :call Flake8()
 augroup END
